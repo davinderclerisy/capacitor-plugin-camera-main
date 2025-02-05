@@ -142,7 +142,7 @@ public class CameraPreviewPlugin: CAPPlugin, AVCaptureVideoDataOutputSampleBuffe
                     }
                 }
                 
-                self.captureSession.sessionPreset = AVCaptureSession.Preset.hd1280x720
+                self.captureSession.sessionPreset = AVCaptureSession.Preset.photo
                 
                 var queue:DispatchQueue
                 queue = DispatchQueue(label: "queue")
@@ -376,7 +376,7 @@ public class CameraPreviewPlugin: CAPPlugin, AVCaptureVideoDataOutputSampleBuffe
         }
         if cameraID == "Front-Facing Camera" && facingBack == true {
             self.captureSession.removeInput(self.videoInput)
-            self.captureSession.sessionPreset = AVCaptureSession.Preset.hd1280x720
+            self.captureSession.sessionPreset = AVCaptureSession.Preset.photo
             let videoDevice = captureDevice(with: AVCaptureDevice.Position.front)
             self.videoInput = try? AVCaptureDeviceInput(device: videoDevice!)
             self.captureSession.addInput(self.videoInput)
