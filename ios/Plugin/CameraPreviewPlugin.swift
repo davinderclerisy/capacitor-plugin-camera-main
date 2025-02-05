@@ -68,6 +68,29 @@ public class CameraPreviewPlugin: CAPPlugin, AVCaptureVideoDataOutputSampleBuffe
 
         call.resolve()
     }
+
+    func destroyCaptureSession() {
+        guard let session = self.captureSession else { return }
+
+        // Stop the session
+        if session.isRunning {
+            session.stopRunning()
+        }
+
+        // Remove all inputs
+        for input in session.inputs {
+            session.removeInput(input)
+        }
+
+        // Remove all outputs
+        for output in session.outputs {
+            session.removeOutput(output)
+        }
+
+        // Release session
+        self.captureSession = nil
+        initializeCaptureSession(enableVideoRecording: false)
+    }
     
     func initializeCaptureSession(enableVideoRecording:Bool){
         // Create the capture session.
@@ -272,7 +295,7 @@ public class CameraPreviewPlugin: CAPPlugin, AVCaptureVideoDataOutputSampleBuffe
     @objc func stopCamera(_ call: CAPPluginCall) {
         restoreWebViewBackground()
         DispatchQueue.main.sync {
-            self.captureSession.stopRunning()
+            destroyCaptureSession()
         }
         call.resolve()
     }
