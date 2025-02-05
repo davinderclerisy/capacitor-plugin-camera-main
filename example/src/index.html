@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>webpack starterkit</title>
+  <meta name="description" content="A light foundation for your next frontend project based on webpack.">
+  <script type="module">
+    import { defineCustomElements } from 'https://cdn.jsdelivr.net/npm/viewfinder-component/dist/esm/loader.js';
+    defineCustomElements();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>eruda.init();</script>
+  <style>
+    .home {
+      padding-top: env(safe-area-inset-top);
+    }
+
+    .overlay {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      position: fixed;
+    }
+
+    #toggleTorchButton {
+      bottom: 0;
+      left: 0;
+      height: 20px;
+      position: absolute;
+      font-family:monospace;
+    }
+
+    #zoominButton {
+      bottom: 20px;
+      right: 0;
+      height: 20px;
+      position: absolute;
+      font-family:monospace;
+    }
+
+    #zoomoutButton {
+      bottom: 0;
+      right: 0;
+      height: 20px;
+      position: absolute;
+      font-family:monospace;
+    }
+      
+    #cameraSelect {
+      top:0;
+      top:env(safe-area-inset-top);
+      left:0;
+      height: 20px;
+      position:absolute;
+    }
+
+    #resolutionSelect {
+      top:20px;
+      top:calc(env(safe-area-inset-top) + 20px);
+      left:0;
+      height: 20px;
+      position:absolute;
+    }
+
+    #captureButton {
+      top:0;
+      top:env(safe-area-inset-top);
+      right:0;
+      height: 20px;
+      position:absolute;
+    }
+
+    #takePhotoButton {
+      top:20px;
+      top:calc(env(safe-area-inset-top) + 20px);
+      right:0;
+      height: 20px;
+      position:absolute;
+    }
+
+    #recordVideoButton {
+      top:40px;
+      top:calc(env(safe-area-inset-top) + 40px);
+      right:0;
+      height: 20px;
+      position:absolute;
+    }
+
+    #captured {
+      max-width: 100%;
+    }
+
+    #capturedVideo {
+      max-width: 100%;
+      display: none;
+    }
+
+    .focus-polygon {
+      fill: transparent;
+      stroke:white;
+      stroke-width:1;
+    }
+
+    view-finder {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      --scan-line-color:orange;
+      --scan-rect-color:orange;
+      visibility: inherit;
+    }
+
+    .transparentViewFinder {
+      --scan-line-color:orange;
+      --scan-rect-color:transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class="home">
+    <button id="startBtn" disabled>Start Camera</button>
+    <label>
+      Enable Scan Region:
+      <input type="checkbox" id="scanRegion"/>
+    </label>
+    <div>
+      <img id="captured"/>
+      <video id="capturedVideo" controls autoplay playsinline/>
+    </div>
+  </div>
+  <div class="controls" style="display:none;">
+    <div class="camera">
+      <div class="dce-video-container"></div>
+    </div>
+    <view-finder 
+      width="1280"
+      height="720"
+      left="320"
+      right="960"
+      top="180"
+      bottom="540"
+      preserve-aspect-ratio="xMidYMid slice">
+    </view-finder>
+    <svg class="overlay" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1280 720"></svg>
+    <select id="cameraSelect"></select>
+    <select id="resolutionSelect"></select>
+    <button id="captureButton" type="button">Capture</button>
+    <button id="takePhotoButton" type="button">Take Photo</button>
+    <button id="recordVideoButton" type="button">Record Video</button>
+    <button id="zoominButton" type="button">+</button>
+    <button id="zoomoutButton" type="button">-</button>
+    <button id="toggleTorchButton" type="button">Toggle Torch</button>
+  </div>
+</body>
+</html>
