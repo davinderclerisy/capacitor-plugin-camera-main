@@ -509,19 +509,42 @@ public class CameraPreviewPlugin: CAPPlugin, AVCaptureVideoDataOutputSampleBuffe
     }
     
     @objc func setFocus(_ call: CAPPluginCall) {
-        let x = call.getFloat("x", -1.0);
-        let y = call.getFloat("y", -1.0);
-        if x != -1.0 && y != -1.0 {
-            let device = videoInput.device
-            do {
-                try device.lockForConfiguration()
-                device.focusPointOfInterest = CGPoint(x: CGFloat(x), y: CGFloat(y))
-                device.unlockForConfiguration()
-            } catch {
-                print("Focues could not be used")
-            }
+        // Validate coordinates (must be normalized 0.0-1.0)
+        guard let x = call.getFloat("x"), 
+            let y = call.getFloat("y"),
+            x >= 0.0 && x <= 1.0,
+            y >= 0.0 && y <= 1.0 else {
+            call.reject("Invalid coordinates. Provide normalized x,y values (0.0-1.0)")
+            return
         }
-        call.resolve()
+
+        let device = videoInput.device
+        
+        do {
+            try device.lockForConfiguration()
+            
+            // 1. Check if focus point is supported
+            guard device.isFocusPointOfInterestSupported else {
+                call.reject("Focus point of interest not supported on this device")
+                return
+            }
+            
+            // 2. Set focus point
+            device.focusPointOfInterest = CGPoint(x: CGFloat(x), y: CGFloat(y))
+            
+            // 3. Set focus mode (choose one supported by your use case)
+            if device.isFocusModeSupported(.autoFocus) {
+                device.focusMode = .autoFocus
+            } else if device.isFocusModeSupported(.continuousAutoFocus) {
+                device.focusMode = .continuousAutoFocus
+            } else {
+                call.reject("No supported focus mode available")
+                return
+            }
+            call.resolve()
+        } catch {
+            call.reject("Failed to lock device for configuration: \(error.localizedDescription)")
+        }
     }
     
     @objc func requestCameraPermission(_ call: CAPPluginCall) {
